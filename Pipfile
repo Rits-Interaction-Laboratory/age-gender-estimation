@@ -9,6 +9,7 @@ numpy = "*"
 tqdm = "*"
 pillow = "*"
 matplotlib = "*"
+pyyaml = "*"
 
 [dev-packages]
 flake8 = "*"
