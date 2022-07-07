@@ -4,8 +4,24 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pydantic = "*"
+numpy = "*"
+tqdm = "*"
+pillow = "*"
+matplotlib = "*"
 
 [dev-packages]
+flake8 = "*"
+autopep8 = "*"
+mypy = "*"
+# prod環境ではtensorflow-gpuを利用するため、ローカル実行用のtensorflowはdev-packagesに登録する必要がある
+tensorflow = "*"
 
 [requires]
 python_version = "3.9"
+
+[scripts]
+test = "python -m unittest discover tests"
+format = "autopep8 -ivr ."
+lint = "flake8 --show-source ."
+mypy = "mypy ."
