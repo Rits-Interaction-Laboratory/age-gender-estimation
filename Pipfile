@@ -10,6 +10,7 @@ tqdm = "*"
 pillow = "*"
 matplotlib = "*"
 pyyaml = "*"
+types-pyyaml = "*"
 
 [dev-packages]
 flake8 = "*"
