@@ -1,3 +1,15 @@
 path:
-  data-path: "resources/data"
-  checkpoint-path: "resources/ckpt"
+  data_path: "resources/data"
+  checkpoint_path: "resources/ckpt"
+
+human:
+  shape: [ 200, 200, 3 ]
+  min_age: 1
+  max_age: 90
+
+nnet:
+  epochs: 50
+  batch_size: 256
+  validation_split_rate: 0.1
+  normalize: true
+  weights_filename: "final.h5"

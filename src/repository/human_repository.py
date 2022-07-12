@@ -5,7 +5,7 @@ import numpy as np
 from tensorflow.keras.preprocessing.image import img_to_array, load_img
 
 from src.model.human_model import HumanModel
-from src.property.application_property import ApplicationProperty
+from src.property.path_property import PathProperty
 
 
 class HumanRepository:
@@ -13,9 +13,9 @@ class HumanRepository:
     人間リポジトリ
     """
 
-    application_property: ApplicationProperty = ApplicationProperty()
+    path_property: PathProperty = PathProperty()
     """
-    アプリケーションプロパティ
+    PATHプロパティ
     """
 
     def select_all(self) -> list[HumanModel]:
@@ -25,7 +25,7 @@ class HumanRepository:
         :return: 人間モデルリスト
         """
 
-        filenames: list[str] = glob.glob(f"{self.application_property.DATA_PATH}/*.jpg")
+        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/*.jpg")
         return list(map(
             lambda filename: self.select_by_filename(filename),
             filenames

@@ -1,6 +1,6 @@
 import argparse
 
-from usecase.train_usecase import TrainUseCase
+from src.usecase.train_usecase import TrainUseCase
 
 # アプリケーションのオプションを定義
 # --helpでヘルプを表示できる

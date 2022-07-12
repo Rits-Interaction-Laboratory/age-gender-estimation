@@ -1,0 +1,32 @@
+from .base_property import BaseProperty
+
+
+class NNetProperty(BaseProperty):
+    """
+    ニューラルネットプロパティ
+    """
+
+    epochs: int
+    """
+    エポック数
+    """
+
+    batch_size: int
+    """
+    バッチサイズ
+    """
+
+    validation_split_rate: float
+    """
+    検証用データの割合
+    """
+
+    normalize: bool
+    """
+    正規化するか
+    """
+
+    weights_filename: str
+    """
+    学習済みファイル名
+    """
