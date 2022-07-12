@@ -5,6 +5,7 @@ import numpy as np
 from tensorflow.python.keras import Model
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 
+from src.property.human_property import HumanProperty
 from src.property.logging_property import LoggingProperty
 from src.property.nnet_property import NNetProperty
 from src.property.path_property import PathProperty
@@ -18,6 +19,11 @@ class BaseNNet(metaclass=ABCMeta):
     path_property: PathProperty = PathProperty()
     """
     PATHプロパティ
+    """
+
+    human_property: HumanProperty = HumanProperty()
+    """
+    人間プロパティ
     """
 
     nnet_property: NNetProperty = NNetProperty()
@@ -46,31 +52,30 @@ class BaseNNet(metaclass=ABCMeta):
 
         raise NotImplementedError()
 
-    @abstractmethod
     def compile_model(self):
         """
         モデルをコンパイル
         """
 
-        raise NotImplementedError()
+        self.model.compile(optimizer="adam")
 
-    @abstractmethod
-    def load_weights(self):
-        """
-        学習済みモデルを読み込み
-        """
-
-        raise NotImplementedError()
-
-    @abstractmethod
     def predict(self, x: np.ndarray) -> np.ndarray:
         """
         推論
 
         :param x: 入力データリスト
+        :return: 推論結果リスト
         """
 
-        raise NotImplementedError()
+        results = self.model.predict(x)
+
+        if self.nnet_property.normalize:
+            results[:, 0] = results[:, 0] \
+                            * (self.human_property.max_age - self.human_property.min_age) + self.human_property.min_age
+            results[:, 1] = results[:, 1] \
+                            * (self.human_property.max_age - self.human_property.min_age)
+
+        return results
 
     def train(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_test: np.ndarray):
         """
@@ -104,3 +109,11 @@ class BaseNNet(metaclass=ABCMeta):
             validation_data=(y_train, y_test),
             callbacks=[checkpoint_callback, logging_callback],
         )
+
+    def load_weights(self):
+        """
+        学習済みモデルをロード
+        """
+
+        filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.weights_filename}"
+        self.model.load_weights(filename)

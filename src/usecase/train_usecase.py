@@ -15,7 +15,7 @@ class TrainUseCase:
     ニューラルネットプロパティ
     """
 
-    nnet: BaseNNet = BaseNNet()
+    nnet: BaseNNet
     """
     ニューラルネット
     """
@@ -24,6 +24,9 @@ class TrainUseCase:
     """
     人間リポジトリ
     """
+
+    def __init__(self, nnet: BaseNNet):
+        self.nnet = nnet
 
     def train(self):
         """

@@ -1,5 +1,6 @@
 import argparse
 
+from src.nnet.cnn import CNN
 from src.usecase.train_usecase import TrainUseCase
 
 # アプリケーションのオプションを定義
@@ -11,7 +12,7 @@ argument_parser.add_argument('-t', '--train',
 arguments = argument_parser.parse_args()
 
 if arguments.train:
-    train_usecase = TrainUseCase()
+    train_usecase = TrainUseCase(CNN())
     train_usecase.train()
 else:
     argument_parser.print_help()
