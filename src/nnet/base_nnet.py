@@ -5,7 +5,7 @@ import numpy as np
 
 class BaseNNet(metaclass=ABCMeta):
     """
-    ニューラルネットワークの基底クラス    
+    ニューラルネットワークの基底クラス
     """
 
     def __init__(self):
