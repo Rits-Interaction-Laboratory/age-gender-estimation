@@ -28,5 +28,10 @@ class NNetProperty(BaseProperty):
 
     weights_filename: str
     """
-    学習済みファイル名
+    学習済みモデルのファイル名
+    """
+
+    checkpoint_filename: str
+    """
+    チェックポイントのファイル名
     """

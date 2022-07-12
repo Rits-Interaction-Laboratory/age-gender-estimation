@@ -1,6 +1,7 @@
 path:
   data_path: "resources/data"
   checkpoint_path: "resources/ckpt"
+  log_path: "log"
 
 human:
   shape: [ 200, 200, 3 ]
@@ -13,3 +14,7 @@ nnet:
   validation_split_rate: 0.1
   normalize: true
   weights_filename: "final.h5"
+  checkpoint_filename: "{epoch}.h5"
+
+logging:
+  filename: "{timestamp}.csv"

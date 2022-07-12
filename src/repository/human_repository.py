@@ -2,7 +2,7 @@ import glob
 import os
 
 import numpy as np
-from tensorflow.keras.preprocessing.image import img_to_array, load_img
+from keras_preprocessing.image import img_to_array, load_img
 
 from src.model.human_model import HumanModel
 from src.property.path_property import PathProperty
@@ -53,3 +53,19 @@ class HumanRepository:
             image=image,
             filename=filename
         )
+
+    def split_dataset(self, humans: list[HumanModel], validation_split_rate: float) -> list[list[HumanModel]]:
+        """
+        データセットを学習用、検証用に分割
+
+        :param humans: 人間リスト
+        :param validation_split_rate: 検証用データの割合
+        :return: [学習用, 検証用]
+        """
+
+        np.random.shuffle(humans)
+        split_index: int = int(validation_split_rate * len(humans))
+        humans_train = humans[split_index:]
+        humans_test = humans_train[0:split_index]
+
+        return [humans_train, humans_test]

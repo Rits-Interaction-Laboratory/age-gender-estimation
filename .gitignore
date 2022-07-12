@@ -168,3 +168,7 @@ cython_debug/
 # Data directory
 data/**/*.jpg
 !data/.gitkeep
+
+# Log Directory
+log/*.csv
+!log/.gitkeep

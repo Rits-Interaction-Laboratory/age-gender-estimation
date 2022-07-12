@@ -15,3 +15,8 @@ class PathProperty(BaseProperty):
     """
     チェックポイントを保存するパス
     """
+
+    log_path: str
+    """
+    ログを保存するパス
+    """
