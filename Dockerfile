@@ -13,8 +13,9 @@ RUN pip install --upgrade pip &&  \
 COPY src $WORKDIR/src
 COPY main.py $WORKDIR/main.py
 
-# 利用するdockerイメージのpythonバージョンが3.6なので、
+# 利用するdockerイメージのPythonバージョンが3.6なので、
 # Python 3.9以降用の型アノテーションを削除する必要がある
-RUN grep -l ' \-> list\[.*\]' ./**/*.py | xargs sed -i.bak -e 's/ \-> list\[.*\]//g' && \
-	grep -l ': list\[.*\],' ./**/*.py | xargs sed -i.bak -e 's/: list\[.*\],/,/g' && \
-	grep -l ': list\[.*\] ' ./**/*.py | xargs sed -i.bak -e 's/: list\[.*\] //g'
+RUN find . -name "*.py" | xargs sed -i.bak -e "s/ \-> list\[.*\]//g" && \
+	find . -name "*.py" | xargs sed -i.bak -e "s/: list\[.*\],/,/g" && \
+    find . -name "*.py" | xargs sed -i.bak -e "s/: list\[.*\])/)/g" && \
+    find . -name "*.py" | xargs sed -i.bak -e "s/: list\[.*\] //g"
