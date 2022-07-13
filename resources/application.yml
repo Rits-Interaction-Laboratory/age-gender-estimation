@@ -8,6 +8,7 @@ human:
   min_age: 1
   max_age: 90
 
+
 nnet:
   epochs: 50
   batch_size: 256

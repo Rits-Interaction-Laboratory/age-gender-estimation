@@ -165,10 +165,14 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 
-# Data directory
-data/**/*.jpg
-!data/.gitkeep
-
 # Log Directory
 log/*.csv
 !log/.gitkeep
+
+# Data directory
+resources/data/**/*.jpg
+!resources/data/.gitkeep
+
+# Checkpoint Directory
+resources/ckpt/*.h5
+!resources/ckpt/.gitkeep
