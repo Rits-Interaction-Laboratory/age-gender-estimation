@@ -97,8 +97,9 @@ class HumanRepository:
             with open(dataset_loader_log_filename, "r") as f:
                 dataset_loader_log: dict = json.load(f)
 
-                # 前回から検証用データの割合が変更されていない場合はreturnする
-                if self.nnet_property.validation_split_rate == dataset_loader_log["validation_split_rate"]:
+                # 前回からプロパティが変更されていない場合はreturnする
+                if self.nnet_property.validation_split_rate == dataset_loader_log["validation_split_rate"] and \
+                    self.nnet_property.usage_rate == dataset_loader_log["usage_rate"]:
                     return dataset_loader_log
 
         # データセットを学習用、検証用に分割
@@ -111,6 +112,7 @@ class HumanRepository:
         dataset_loader_log = {
             "train_filenames": [human.filename for human in humans_train],
             "test_filenames": [human.filename for human in humans_test],
+            "usage_rate": self.nnet_property.usage_rate,
             "validation_split_rate": self.nnet_property.validation_split_rate,
         }
 
