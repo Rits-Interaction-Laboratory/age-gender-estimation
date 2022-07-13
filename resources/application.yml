@@ -8,10 +8,10 @@ human:
   min_age: 1
   max_age: 90
 
-
 nnet:
   epochs: 50
   batch_size: 256
+  usage_rate: 1.0
   validation_split_rate: 0.1
   normalize: true
   weights_filename: "final.h5"

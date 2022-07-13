@@ -3,6 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import tensorflow.python.keras.backend as K
+from keras.optimizers import Adam
 from tensorflow.python.keras import Model
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
@@ -44,7 +45,10 @@ class BaseNNet(metaclass=ABCMeta):
     """
 
     def __init__(self):
-        pass
+        self.build_model()
+        self.compile_model()
+
+        self.model.summary()
 
     @abstractmethod
     def build_model(self):
@@ -59,7 +63,11 @@ class BaseNNet(metaclass=ABCMeta):
         モデルをコンパイル
         """
 
-        self.model.compile(optimizer="adam")
+        optimizer = Adam(1e-3)
+        self.model.compile(
+            optimizer=optimizer,
+            loss=self.loss,
+        )
 
     def predict(self, x: np.ndarray) -> np.ndarray:
         """
@@ -74,8 +82,7 @@ class BaseNNet(metaclass=ABCMeta):
         if self.nnet_property.normalize:
             results[:, 0] = results[:, 0] \
                             * (self.human_property.max_age - self.human_property.min_age) + self.human_property.min_age
-            results[:, 1] = results[:, 1] \
-                            * (self.human_property.max_age - self.human_property.min_age)
+            results[:, 1] = results[:, 1] * (self.human_property.max_age - self.human_property.min_age)
 
         return results
 
@@ -90,7 +97,7 @@ class BaseNNet(metaclass=ABCMeta):
         """
 
         # チェックポイントを保存するコールバックを定義
-        checkpoint_filename: str = f"{self.path_property.checkpoint_path}/${self.nnet_property.checkpoint_filename}"
+        checkpoint_filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.checkpoint_filename}"
         checkpoint_callback = ModelCheckpoint(
             filepath=checkpoint_filename,
             verbose=1,
@@ -100,15 +107,16 @@ class BaseNNet(metaclass=ABCMeta):
 
         # ロギングするコールバックを定義
         timestamp = int(time.time())
-        logging_callback = CSVLogger(self.logging_property.filename.format(timestamp=timestamp))
+        logging_callback = CSVLogger(
+            f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}")
 
         # 学習
         self.model.fit(
             x_train,
-            x_test,
+            y_train,
             epochs=self.nnet_property.epochs,
             batch_size=self.nnet_property.batch_size,
-            validation_data=(y_train, y_test),
+            validation_data=(x_test, y_test),
             callbacks=[checkpoint_callback, logging_callback],
         )
 
@@ -136,9 +144,12 @@ class BaseNNet(metaclass=ABCMeta):
         θ = y_pred[:, 0]
         σ = y_pred[:, 1]
 
+        # 0になることを防ぐためのオフセット
+        epsilon = K.constant(K.epsilon())
+
         # LaTeX: log(2 \pi \sigma^2) + \frac{(y - \theta)^2}{\sigma^2}
         return K.mean(
-            K.log(2 * np.pi * (σ ** 2)) + ((y - θ) ** 2) / (σ ** 2 + K.constant(K.epsilon()))
+            K.log((2 * np.pi * (σ ** 2)) + ((y - θ) ** 2) / (σ ** 2 + epsilon))
         )
 
     def output_activation(self, y_pred: np.ndarray) -> Tensor:

@@ -2,9 +2,11 @@ import glob
 import os
 
 import numpy as np
+import tqdm
 from keras_preprocessing.image import img_to_array, load_img
 
 from src.model.human_model import HumanModel
+from src.property.nnet_property import NNetProperty
 from src.property.path_property import PathProperty
 
 
@@ -18,6 +20,11 @@ class HumanRepository:
     PATHプロパティ
     """
 
+    nnet_property: NNetProperty = NNetProperty()
+    """
+    ニューラルネットプロパティ
+    """
+
     def select_all(self) -> list[HumanModel]:
         """
         人間モデルを全件取得
@@ -26,9 +33,10 @@ class HumanRepository:
         """
 
         filenames: list[str] = glob.glob(f"{self.path_property.data_path}/*.jpg")
+        filenames = filenames[:int(self.nnet_property.usage_rate * len(filenames))]
         return list(map(
             lambda filename: self.select_by_filename(filename),
-            filenames
+            tqdm.tqdm(filenames)
         ))
 
     def select_by_filename(self, filename: str) -> HumanModel:
@@ -54,17 +62,16 @@ class HumanRepository:
             filename=filename
         )
 
-    def split_dataset(self, humans: list[HumanModel], validation_split_rate: float) -> list[list[HumanModel]]:
+    def split_dataset(self, humans: list[HumanModel]) -> list[list[HumanModel]]:
         """
         データセットを学習用、検証用に分割
 
         :param humans: 人間リスト
-        :param validation_split_rate: 検証用データの割合
         :return: [学習用, 検証用]
         """
 
         np.random.shuffle(humans)
-        split_index: int = int(validation_split_rate * len(humans))
+        split_index: int = int(self.nnet_property.validation_split_rate * len(humans))
         humans_train = humans[split_index:]
         humans_test = humans_train[0:split_index]
 

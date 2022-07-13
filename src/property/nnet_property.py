@@ -16,6 +16,11 @@ class NNetProperty(BaseProperty):
     バッチサイズ
     """
 
+    usage_rate: float
+    """
+    使用するデータセットの割合
+    """
+
     validation_split_rate: float
     """
     検証用データの割合
