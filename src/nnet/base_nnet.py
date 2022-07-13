@@ -4,7 +4,7 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 import tensorflow.python.keras.backend as K
 from keras.optimizers import Adam
-from tensorflow.python.keras import Model
+from tensorflow.python.keras import Model, metrics
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
 
@@ -67,6 +67,7 @@ class BaseNNet(metaclass=ABCMeta):
         self.model.compile(
             optimizer=optimizer,
             loss=self.loss,
+            metrics=[self.θ_metric, self.σ_metric]
         )
 
     def predict(self, x: np.ndarray) -> np.ndarray:
@@ -95,6 +96,12 @@ class BaseNNet(metaclass=ABCMeta):
         :param x_test: 入力データ（検証用）
         :param y_test: 正解ラベル（検証用）
         """
+
+        if self.nnet_property.normalize:
+            y_train = (y_train - self.human_property.min_age) \
+                      / (self.human_property.max_age - self.human_property.min_age)
+            y_test = (y_test - self.human_property.min_age) \
+                     / (self.human_property.max_age - self.human_property.min_age)
 
         # チェックポイントを保存するコールバックを定義
         checkpoint_filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.checkpoint_filename}"
@@ -170,3 +177,53 @@ class BaseNNet(metaclass=ABCMeta):
             σ = K.sigmoid(σ)
 
         return K.stack([θ, σ], 1)
+
+    def θ_metric(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
+        """
+        年齢θの評価関数
+
+        :param y_true: NNの出力
+        :param y_pred: 正解ラベル
+        :return: θの評価関数
+        """
+
+        # y: 正解の年齢
+        # θ: 推定した年齢
+        # σ: 推定した残差標準偏差
+        y = y_true[:, 0]
+        θ = y_pred[:, 0]
+
+        if self.nnet_property.normalize:
+            max_age_tensor = K.constant(self.human_property.max_age)
+            min_age_tensor = K.constant(self.human_property.min_age)
+
+            y = y * (max_age_tensor - min_age_tensor) + min_age_tensor
+            θ = θ * (max_age_tensor - min_age_tensor) + min_age_tensor
+
+        return metrics.mean_absolute_error(y, θ)
+
+    def σ_metric(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
+        """
+        残差標準偏差σの評価関数
+
+        :param y_true: NNの出力
+        :param y_pred: 正解ラベル
+        :return: σの評価関数
+        """
+
+        # y: 正解の年齢
+        # θ: 推定した年齢
+        # σ: 推定した残差標準偏差
+        y = y_true[:, 0]
+        θ = y_pred[:, 0]
+        σ = y_pred[:, 1]
+
+        if self.nnet_property.normalize:
+            max_age_tensor = K.constant(self.human_property.max_age)
+            min_age_tensor = K.constant(self.human_property.min_age)
+
+            y = y * (max_age_tensor - min_age_tensor) + min_age_tensor
+            θ = θ * (max_age_tensor - min_age_tensor) + min_age_tensor
+            σ = σ * (max_age_tensor - min_age_tensor)
+
+        return metrics.mean_absolute_error(K.abs(y - θ), σ)
