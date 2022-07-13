@@ -1,6 +1,6 @@
 import numpy as np
-from keras.utils import Sequence
 from sklearn import utils
+from tensorflow.python.keras.utils.data_utils import Sequence
 
 
 class BatchDataGenerator(Sequence):

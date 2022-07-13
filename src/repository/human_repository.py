@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 import tqdm
-from keras_preprocessing.image import img_to_array, load_img
+from keras.utils import img_to_array, load_img
 
 from src.model.human_model import HumanModel
 from src.property.logging_property import LoggingProperty
