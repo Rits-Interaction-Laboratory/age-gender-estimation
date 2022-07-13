@@ -31,6 +31,11 @@ class NNetProperty(BaseProperty):
     正規化するか
     """
 
+    freeze: bool
+    """
+    バッチ毎にモデルの一部をフリーズするか
+    """
+
     weights_filename: str
     """
     学習済みモデルのファイル名

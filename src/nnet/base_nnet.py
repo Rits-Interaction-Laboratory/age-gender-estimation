@@ -5,9 +5,11 @@ import numpy as np
 import tensorflow.python.keras.backend as K
 from keras.optimizers import Adam
 from tensorflow.python.keras import Model, metrics
+from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
 
+from src.nnet.freeze_callback import FreezeCallback
 from src.property.human_property import HumanProperty
 from src.property.logging_property import LoggingProperty
 from src.property.nnet_property import NNetProperty
@@ -117,6 +119,12 @@ class BaseNNet(metaclass=ABCMeta):
         logging_callback = CSVLogger(
             f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}")
 
+        callbacks: list[Callback] = [checkpoint_callback, logging_callback]
+        if self.nnet_property.freeze:
+            # バッチ毎にモデルの一部をフリーズするコールバックを定義
+            freeze_callback = FreezeCallback()
+            callbacks.append(freeze_callback)
+
         # 学習
         self.model.fit(
             x_train,
@@ -124,7 +132,7 @@ class BaseNNet(metaclass=ABCMeta):
             epochs=self.nnet_property.epochs,
             batch_size=self.nnet_property.batch_size,
             validation_data=(x_test, y_test),
-            callbacks=[checkpoint_callback, logging_callback],
+            callbacks=callbacks,
         )
 
     def load_weights(self):

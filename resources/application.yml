@@ -14,6 +14,7 @@ nnet:
   usage_rate: 1.0
   validation_split_rate: 0.1
   normalize: true
+  freeze: true
   weights_filename: "final.h5"
   checkpoint_filename: "{epoch}.h5"
 
