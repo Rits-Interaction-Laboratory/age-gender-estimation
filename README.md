@@ -31,18 +31,25 @@ $ pipenv run format
 
 ## Usage
 
+### Preparation
+
 You need to download [UTKFace](https://susanqq.github.io/UTKFace/) and place the data in `data` directory.
 
-And then, you can run this application from `src/main.py`.
+And then, you need to copy `resources/application-sample.yml` to `resources/application.yml`.
+This file is application preferences, so please rewrite it if necessary.
+
+### Run Application
+
+You can run this application from pipenv.
 
 ```bash
-$ pipenv run python src/main.py --train
+$ pipenv run start --train
 ```
 
 Please refer to the help for more detailed usage.
 
 ```
-$ pipenv run python src/main.py --help
+$ pipenv run start --help
 usage: main.py [-h] [-r] [-c]
 
 optional arguments:
