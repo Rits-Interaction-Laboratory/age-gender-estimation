@@ -11,6 +11,7 @@ pillow = "*"
 matplotlib = "*"
 pyyaml = "*"
 types-pyyaml = "*"
+sklearn = "*"
 
 [dev-packages]
 flake8 = "*"
