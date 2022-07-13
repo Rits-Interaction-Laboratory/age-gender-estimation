@@ -12,6 +12,7 @@ matplotlib = "*"
 pyyaml = "*"
 types-pyyaml = "*"
 sklearn = "*"
+keras-preprocessing = "*"
 
 [dev-packages]
 flake8 = "*"

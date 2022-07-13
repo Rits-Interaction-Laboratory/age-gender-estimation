@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "3135107d0c9b893a34c9996fbd8f18767a8cf851923bdbc4c6cd30c0f56fca2a"
+            "sha256": "4ac4c333881a03e6a8e4b2b60e4907eee5fe7a3f2daf5664974ec816d9b03f4e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -39,6 +39,14 @@
             ],
             "markers": "python_version >= '3.6'",
             "version": "==1.1.0"
+        },
+        "keras-preprocessing": {
+            "hashes": [
+                "sha256:7b82029b130ff61cc99b55f3bd27427df4838576838c5b2f65940e4fcec99a7b",
+                "sha256:add82567c50c8bc648c14195bf544a5ce7c1f76761536956c3d2978970179ef3"
+            ],
+            "index": "pypi",
+            "version": "==1.1.2"
         },
         "kiwisolver": {
             "hashes": [
@@ -627,6 +635,7 @@
                 "sha256:7b82029b130ff61cc99b55f3bd27427df4838576838c5b2f65940e4fcec99a7b",
                 "sha256:add82567c50c8bc648c14195bf544a5ce7c1f76761536956c3d2978970179ef3"
             ],
+            "index": "pypi",
             "version": "==1.1.2"
         },
         "libclang": {
