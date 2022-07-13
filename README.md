@@ -53,9 +53,9 @@ $ pipenv run start --help
 usage: main.py [-h] [-r] [-c]
 
 optional arguments:
-  -h, --help   show this help message and exit
+  -h, --help            show this help message and exit
   -t, --train           学習
-  -e, --estimate        推定
+  -l, --log             ログ分析
 ```
 
 ### Run on docker
@@ -64,19 +64,17 @@ After downloading the dataset, execute the following command.
 
 ```bash
 # build docker image
-$ docker build -t age-estimation .
+$ docker build -t age-gender-estimation .
 
 # train
 $ docker run --gpus=all \
-  -v /home/abe/age-estimation/data:/app/data \
-  -v /home/abe/age-estimation/ckpt:/app/ckpt \
-  -v /home/abe/age-estimation/analysis:/app/analysis \
-  -it age-estimation python src/main.py --train
+  -v $HOME/age-gender-estimation/resources:/app/resources \
+  -v $HOME/age-gender-estimation/log:/app/log \
+  -it age-gender-estimation python main.py --train
 
-# estimate & make heatmap
+# estimate & export heatmap
 $ docker run --gpus=all \
-  -v /home/abe/age-estimation/data:/app/data \
-  -v /home/abe/age-estimation/ckpt:/app/ckpt \
-  -v /home/abe/age-estimation/analysis:/app/analysis \
-  -it age-estimation python src/main.py --estimate
+  -v $HOME/age-gender-estimation/resources:/app/resources \
+  -v $HOME/age-gender-estimation/log:/app/log \
+  -it age-gender-estimation python main.py --estimation
 ```
