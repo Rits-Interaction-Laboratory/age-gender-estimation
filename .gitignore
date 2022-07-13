@@ -168,11 +168,15 @@ cython_debug/
 # Application properties
 resources/application.yml
 
-# Log Director
+# Log directory
 log/**/*.csv
 log/**/*.json
 log/**/*.png
 !log/.gitkeep
+
+# Heatmap directory
+heatmap/**/*.png
+!heatmap/.gitkeep
 
 # Data directory
 resources/data/**/*.jpg

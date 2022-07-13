@@ -20,3 +20,8 @@ class PathProperty(BaseProperty):
     """
     ログを保存するパス
     """
+
+    heatmap_path: str = ""
+    """
+    ヒートマップを保存するパス
+    """

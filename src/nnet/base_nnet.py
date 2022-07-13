@@ -155,12 +155,11 @@ class BaseNNet(metaclass=ABCMeta):
                 callbacks=callbacks,
             )
 
-    def load_weights(self):
+    def load_weights(self, filename):
         """
         学習済みモデルをロード
         """
 
-        filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.weights_filename}"
         self.model.load_weights(filename)
 
     def first_loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:

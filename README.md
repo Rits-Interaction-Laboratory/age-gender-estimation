@@ -55,6 +55,7 @@ usage: main.py [-h] [-r] [-c]
 optional arguments:
   -h, --help            show this help message and exit
   -t, --train           学習
+  -e, --estimate        年齢推定
   -l, --log             ログ分析
 ```
 

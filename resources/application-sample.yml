@@ -2,6 +2,7 @@ path:
   data_path: "resources/data"
   checkpoint_path: "resources/ckpt"
   log_path: "log"
+  heatmap_path: "heatmap"
 
 human:
   shape: [ 200, 200, 3 ]

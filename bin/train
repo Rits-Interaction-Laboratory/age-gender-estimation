@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 docker run --gpus=all \
-  -v /home/abe/age-gender-estimation/resources:/app/resources \
-  -v /home/abe/age-gender-estimation/log:/app/log \
+  -v $HOME/age-gender-estimation/resources:/app/resources \
+  -v $HOME/age-gender-estimation/log:/app/log \
   -it age-gender-estimation python main.py --train
