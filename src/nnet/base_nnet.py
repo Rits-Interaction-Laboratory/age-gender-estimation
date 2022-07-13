@@ -2,8 +2,10 @@ import time
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
+import tensorflow.python.keras.backend as K
 from tensorflow.python.keras import Model
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
+from tensorflow.python.types.core import Tensor
 
 from src.property.human_property import HumanProperty
 from src.property.logging_property import LoggingProperty
@@ -117,3 +119,43 @@ class BaseNNet(metaclass=ABCMeta):
 
         filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.weights_filename}"
         self.model.load_weights(filename)
+
+    def loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
+        """
+        損失関数
+
+        :param y_true: NNの出力
+        :param y_pred: 正解ラベル
+        :return: loss
+        """
+
+        # y: 正解の年齢
+        # θ: 推定した年齢
+        # σ: 推定した残差標準偏差
+        y = y_true[:, 0]
+        θ = y_pred[:, 0]
+        σ = y_pred[:, 1]
+
+        # LaTeX: log(2 \pi \sigma^2) + \frac{(y - \theta)^2}{\sigma^2}
+        return K.mean(
+            K.log(2 * np.pi * (σ ** 2)) + ((y - θ) ** 2) / (σ ** 2 + K.constant(K.epsilon()))
+        )
+
+    def output_activation(self, y_pred: np.ndarray) -> Tensor:
+        """
+        出力層の活性化関数
+
+        :param y_pred: NNの出力
+        :return: 活性化関数を通した出力
+        """
+
+        # θ: 推定した年齢
+        # σ: 推定した残差標準偏差
+        θ = y_pred[:, 0]
+        σ = y_pred[:, 1]
+
+        if self.nnet_property.normalize:
+            θ = K.sigmoid(θ)
+            σ = K.sigmoid(σ)
+
+        return K.stack([θ, σ], 1)

@@ -12,6 +12,7 @@ class CNN(BaseNNet):
 
         self.model = Sequential()
 
+        # input layer
         self.model.add(layers.Input(shape=self.human_property.shape))
 
         # convolution 1st layer
@@ -25,4 +26,4 @@ class CNN(BaseNNet):
         self.model.add(layers.BatchNormalization())
 
         # fully connected final layer
-        self.model.add(layers.Dense(2, activation="sigmoid"))
+        self.model.add(layers.Dense(2, activation=self.output_activation))
