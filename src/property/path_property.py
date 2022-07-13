@@ -6,17 +6,17 @@ class PathProperty(BaseProperty):
     PATHプロパティ
     """
 
-    data_path: str
+    data_path: str = ""
     """
     データを保存するパス
     """
 
-    checkpoint_path: str
+    checkpoint_path: str = ""
     """
     チェックポイントを保存するパス
     """
 
-    log_path: str
+    log_path: str = ""
     """
     ログを保存するパス
     """
