@@ -19,4 +19,5 @@ nnet:
   checkpoint_filename: "{epoch}.h5"
 
 logging:
-  filename: "{timestamp}.csv"
+  train_filename: "{timestamp}.csv"
+  dataset_loader_filename: "dataset_loader.json"

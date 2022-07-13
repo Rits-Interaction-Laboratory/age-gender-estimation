@@ -116,7 +116,7 @@ class BaseNNet(metaclass=ABCMeta):
         # ロギングするコールバックを定義
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         logging_callback = CSVLogger(
-            filename=f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}",
+            filename=f"{self.path_property.log_path}/{self.logging_property.train_filename.format(timestamp=timestamp)}",
             separator=",",
             append=True,
         )

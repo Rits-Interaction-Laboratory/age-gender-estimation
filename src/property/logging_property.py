@@ -6,7 +6,13 @@ class LoggingProperty(BaseProperty):
     ロギングプロパティ
     """
 
-    filename: str
+    train_filename: str
     """
-    ログファイル名
+    
+    学習ログのファイル名
+    """
+
+    dataset_loader_filename: str
+    """
+    データセット読み込みログのファイル名
     """

@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 
 import numpy as np
@@ -6,6 +7,7 @@ import tqdm
 from keras_preprocessing.image import img_to_array, load_img
 
 from src.model.human_model import HumanModel
+from src.property.logging_property import LoggingProperty
 from src.property.nnet_property import NNetProperty
 from src.property.path_property import PathProperty
 
@@ -23,6 +25,11 @@ class HumanRepository:
     nnet_property: NNetProperty = NNetProperty()
     """
     ニューラルネットプロパティ
+    """
+
+    logging_property: LoggingProperty = LoggingProperty()
+    """
+    ロギングプロパティ
     """
 
     def select_all(self) -> list[HumanModel]:
@@ -70,9 +77,46 @@ class HumanRepository:
         :return: [学習用, 検証用]
         """
 
+        dataset_loader_log: dict = self.__get_dataset_loader_log(humans)
+        humans_train = list(filter(lambda human: human.filename in dataset_loader_log["train_filenames"], humans))
+        humans_test = list(filter(lambda human: human.filename in dataset_loader_log["test_filenames"], humans))
+
+        return [humans_train, humans_test]
+
+    def __get_dataset_loader_log(self, humans: list[HumanModel]) -> dict:
+        """
+        データセット読み込みのログを取得（存在しない場合は作成）
+
+        :param humans: 人間リスト
+        :return: ログ
+        """
+
+        # 前回のログが存在する場合は再利用する
+        dataset_loader_log_filename = f"{self.path_property.log_path}/{self.logging_property.dataset_loader_filename}"
+        if os.path.exists(dataset_loader_log_filename):
+            with open(dataset_loader_log_filename, "r") as f:
+                dataset_loader_log: dict = json.load(f)
+
+                # 前回から検証用データの割合が変更されていない場合はreturnする
+                if self.nnet_property.validation_split_rate == dataset_loader_log["validation_split_rate"]:
+                    return dataset_loader_log
+
+        # データセットを学習用、検証用に分割
         np.random.shuffle(humans)
         split_index: int = int(self.nnet_property.validation_split_rate * len(humans))
         humans_train = humans[split_index:]
-        humans_test = humans_train[0:split_index]
+        humans_test = humans[0:split_index]
 
-        return [humans_train, humans_test]
+        # ログ作成
+        dataset_loader_log = {
+            "train_filenames": [human.filename for human in humans_train],
+            "test_filenames": [human.filename for human in humans_test],
+            "validation_split_rate": self.nnet_property.validation_split_rate,
+        }
+
+        # ログ出力
+        dataset_loader_log_filename = f"{self.path_property.log_path}/{self.logging_property.dataset_loader_filename}"
+        with open(dataset_loader_log_filename, "w") as f:
+            json.dump(dataset_loader_log, f, indent=2)
+
+        return dataset_loader_log

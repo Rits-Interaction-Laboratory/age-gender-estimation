@@ -168,8 +168,9 @@ cython_debug/
 # Application properties
 resources/application.yml
 
-# Log Directory
+# Log Director
 log/*.csv
+log/*.json
 !log/.gitkeep
 
 # Data directory
