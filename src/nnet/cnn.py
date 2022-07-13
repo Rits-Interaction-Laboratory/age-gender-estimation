@@ -1,4 +1,4 @@
-from keras import Sequential, layers
+from tensorflow.python.keras import Sequential, layers
 
 from src.nnet.base_nnet import BaseNNet
 

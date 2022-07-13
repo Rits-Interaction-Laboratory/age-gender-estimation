@@ -4,10 +4,10 @@ from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import tensorflow.python.keras.backend as K
-from keras.optimizers import Adam
 from tensorflow.python.keras import Model, metrics, losses
 from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
+from tensorflow.python.keras.optimizer_v2.adam import Adam
 from tensorflow.python.types.core import Tensor
 
 from src.nnet.batch_data_generator import BatchDataGenerator
