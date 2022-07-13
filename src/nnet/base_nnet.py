@@ -10,6 +10,7 @@ from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
 
+from src.nnet.batch_data_generator import BatchDataGenerator
 from src.nnet.freeze_callback import FreezeCallback
 from src.property.human_property import HumanProperty
 from src.property.logging_property import LoggingProperty
@@ -129,26 +130,32 @@ class BaseNNet(metaclass=ABCMeta):
 
         # 学習
         self.compile_model(self.first_loss)
-        self.model.fit(
-            x_train,
-            y_train,
+        self.model.fit_generator(
+            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, False),
             epochs=self.nnet_property.epochs,
-            batch_size=self.nnet_property.batch_size,
             validation_data=(x_test, y_test),
             callbacks=callbacks,
         )
 
         # lossを切り替えて再度学習
         self.compile_model(self.second_loss)
-        self.model.fit(
-            x_train,
-            y_train,
+        self.model.fit_generator(
+            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, False),
             initial_epoch=self.nnet_property.epochs,
             epochs=self.nnet_property.epochs * 2,
-            batch_size=self.nnet_property.batch_size,
             validation_data=(x_test, y_test),
             callbacks=callbacks,
         )
+
+        if self.nnet_property.freeze:
+            # バッチデータ生成器を切り替えて再度学習
+            self.model.fit_generator(
+                BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, True),
+                initial_epoch=self.nnet_property.epochs * 2,
+                epochs=self.nnet_property.epochs * 3,
+                validation_data=(x_test, y_test),
+                callbacks=callbacks,
+            )
 
     def load_weights(self):
         """
