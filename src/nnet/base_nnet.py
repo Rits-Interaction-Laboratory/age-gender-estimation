@@ -1,4 +1,4 @@
-import time
+import datetime
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
@@ -115,7 +115,7 @@ class BaseNNet(metaclass=ABCMeta):
         self.model.save_weights(checkpoint_filename.format(epoch=0))
 
         # ロギングするコールバックを定義
-        timestamp = int(time.time())
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         logging_callback = CSVLogger(
             f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}")
 
