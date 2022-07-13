@@ -1,10 +1,11 @@
 import datetime
+import typing
 from abc import ABCMeta, abstractmethod
 
 import numpy as np
 import tensorflow.python.keras.backend as K
 from keras.optimizers import Adam
-from tensorflow.python.keras import Model, metrics
+from tensorflow.python.keras import Model, metrics, losses
 from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
@@ -48,8 +49,6 @@ class BaseNNet(metaclass=ABCMeta):
 
     def __init__(self):
         self.build_model()
-        self.compile_model()
-
         self.model.summary()
 
     @abstractmethod
@@ -60,7 +59,7 @@ class BaseNNet(metaclass=ABCMeta):
 
         raise NotImplementedError()
 
-    def compile_model(self):
+    def compile_model(self, loss: typing.Callable):
         """
         モデルをコンパイル
         """
@@ -68,7 +67,7 @@ class BaseNNet(metaclass=ABCMeta):
         optimizer = Adam(1e-3)
         self.model.compile(
             optimizer=optimizer,
-            loss=self.loss,
+            loss=loss,
             metrics=[self.θ_metric, self.σ_metric]
         )
 
@@ -117,7 +116,10 @@ class BaseNNet(metaclass=ABCMeta):
         # ロギングするコールバックを定義
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
         logging_callback = CSVLogger(
-            f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}")
+            filename=f"{self.path_property.log_path}/{self.logging_property.filename.format(timestamp=timestamp)}",
+            separator=",",
+            append=True,
+        )
 
         callbacks: list[Callback] = [checkpoint_callback, logging_callback]
         if self.nnet_property.freeze:
@@ -126,10 +128,23 @@ class BaseNNet(metaclass=ABCMeta):
             callbacks.append(freeze_callback)
 
         # 学習
+        self.compile_model(self.first_loss)
         self.model.fit(
             x_train,
             y_train,
             epochs=self.nnet_property.epochs,
+            batch_size=self.nnet_property.batch_size,
+            validation_data=(x_test, y_test),
+            callbacks=callbacks,
+        )
+
+        # lossを切り替えて再度学習
+        self.compile_model(self.second_loss)
+        self.model.fit(
+            x_train,
+            y_train,
+            initial_epoch=self.nnet_property.epochs,
+            epochs=self.nnet_property.epochs * 2,
             batch_size=self.nnet_property.batch_size,
             validation_data=(x_test, y_test),
             callbacks=callbacks,
@@ -143,9 +158,26 @@ class BaseNNet(metaclass=ABCMeta):
         filename: str = f"{self.path_property.checkpoint_path}/{self.nnet_property.weights_filename}"
         self.model.load_weights(filename)
 
-    def loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
+    def first_loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
         """
-        損失関数
+        損失関数（1番目）
+
+        :param y_true: NNの出力
+        :param y_pred: 正解ラベル
+        :return: loss
+        """
+
+        # y: 正解の年齢
+        # θ: 推定した年齢
+        # σ: 推定した残差標準偏差
+        y = y_true[:, 0]
+        θ = y_pred[:, 0]
+
+        return losses.mean_squared_error(y, θ)
+
+    def second_loss(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
+        """
+        損失関数（2番目）
 
         :param y_true: NNの出力
         :param y_pred: 正解ラベル
