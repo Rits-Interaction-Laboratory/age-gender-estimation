@@ -13,14 +13,13 @@ pyyaml = "*"
 types-pyyaml = "*"
 sklearn = "*"
 keras-preprocessing = "*"
-keras = "2.3.0"
 
 [dev-packages]
 flake8 = "*"
 autopep8 = "*"
 mypy = "*"
 # prod環境ではtensorflow-gpuを利用するため、ローカル実行用のtensorflowはdev-packagesに登録する必要がある
-tensorflow = "2.3.0"
+tensorflow = "2.8.0"
 
 [requires]
 python_version = "3.9"

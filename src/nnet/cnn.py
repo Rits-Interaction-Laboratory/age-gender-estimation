@@ -1,4 +1,4 @@
-from keras.legacy_tf_layers.normalization import BatchNormalization
+from tensorflow.keras.layers import BatchNormalization
 from tensorflow.python.keras import Sequential, layers
 
 from src.nnet.base_nnet import BaseNNet
