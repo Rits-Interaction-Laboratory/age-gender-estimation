@@ -7,7 +7,6 @@ import tensorflow.python.keras.backend as K
 from tensorflow.python.keras import Model, metrics, losses
 from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
-from tensorflow.python.keras.optimizer_v2.adam import Adam
 from tensorflow.python.types.core import Tensor
 
 from src.nnet.batch_data_generator import BatchDataGenerator
@@ -65,9 +64,8 @@ class BaseNNet(metaclass=ABCMeta):
         モデルをコンパイル
         """
 
-        optimizer = Adam(1e-3)
         self.model.compile(
-            optimizer=optimizer,
+            optimizer="adam",
             loss=loss,
             metrics=[self.θ_metric, self.σ_metric]
         )
