@@ -8,4 +8,5 @@ done
 docker run --gpus=all \
   -v $HOME/age-gender-estimation/resources:/app/resources \
   -v $HOME/age-gender-estimation/log:/app/log \
-  -it age-gender-estimation python main.py --train $args
+  -v $HOME/age-gender-estimation/heatmap:/app/heatmap \
+  -it age-gender-estimation python main.py --estimate $args
