@@ -1,4 +1,4 @@
-# Age Estimation
+# Age Gender Estimation
 
 ![CI](https://github.com/Rits-Interaction-Laboratory/age-gender-estimation/workflows/CI/badge.svg)
 ![python version](https://img.shields.io/badge/python_version-3.9-blue.svg)
@@ -77,5 +77,6 @@ $ docker run --gpus=all \
 $ docker run --gpus=all \
   -v $HOME/age-gender-estimation/resources:/app/resources \
   -v $HOME/age-gender-estimation/log:/app/log \
+  -v $HOME/age-gender-estimation/heatmap:/app/heatmap \
   -it age-gender-estimation python main.py --estimation
 ```
