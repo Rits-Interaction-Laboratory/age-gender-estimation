@@ -129,7 +129,7 @@ class BaseNNet(metaclass=ABCMeta):
         # 学習
         self.compile_model(self.first_loss)
         self.model.fit_generator(
-            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, False),
+            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size),
             epochs=self.nnet_property.epochs,
             validation_data=(x_test, y_test),
             callbacks=callbacks,
@@ -138,22 +138,12 @@ class BaseNNet(metaclass=ABCMeta):
         # lossを切り替えて再度学習
         self.compile_model(self.second_loss)
         self.model.fit_generator(
-            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, False),
+            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size),
             initial_epoch=self.nnet_property.epochs,
             epochs=self.nnet_property.epochs * 2,
             validation_data=(x_test, y_test),
             callbacks=callbacks,
         )
-
-        if self.nnet_property.freeze:
-            # バッチデータ生成器を切り替えて再度学習
-            self.model.fit_generator(
-                BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size, True),
-                initial_epoch=self.nnet_property.epochs * 2,
-                epochs=self.nnet_property.epochs * 3,
-                validation_data=(x_test, y_test),
-                callbacks=callbacks,
-            )
 
     def load_weights(self, filename):
         """

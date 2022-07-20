@@ -8,18 +8,14 @@ class BatchDataGenerator(Sequence):
     バッチデータ生成器
     """
 
-    def __init__(self, x: np.ndarray, y: np.ndarray, batch_size: int, reverse: bool):
+    def __init__(self, x: np.ndarray, y: np.ndarray, batch_size: int):
         self.x = x
         self.y = y
         self.batch_size = batch_size
 
         # データを2グループに分割
-        if reverse:
-            self.x1, self.x2 = np.array_split(self.x, 2)
-            self.y1, self.y2 = np.array_split(self.y, 2)
-        else:
-            self.x2, self.x1 = np.array_split(self.x, 2)
-            self.y2, self.y1 = np.array_split(self.y, 2)
+        self.x1, self.x2 = np.array_split(self.x, 2)
+        self.y1, self.y2 = np.array_split(self.y, 2)
 
     def __len__(self) -> int:
         length = int(len(self.x) / self.batch_size)
