@@ -125,10 +125,10 @@ class EstimateUseCase:
         plt.savefig(f"{self.path_property.heatmap_path}/σ_test.png")
 
         # 残差標準偏差のヒートマップを作成
-        σ_pred_standard_deviation_list_train: list[float] = list(range(self.human_property.max_age))
-        standard_deviation_list_train: list[float] = list(np.zeros(self.human_property.max_age))
-        σ_pred_standard_deviation_list_test: list[float] = list(range(self.human_property.max_age))
-        standard_deviation_list_test: list[float] = list(np.zeros(self.human_property.max_age))
+        σ_pred_standard_deviation_list_train: list[float] = []
+        standard_deviation_list_train: list[float] = []
+        σ_pred_standard_deviation_list_test: list[float] = []
+        standard_deviation_list_test: list[float] = []
 
         for i in range(self.human_property.max_age):
             sum_train: float = 0.0
@@ -146,10 +146,12 @@ class EstimateUseCase:
                     sum_test += σ_true_list_test[j] ** 2
                     cnt_test += 1
 
-            if cnt_train != 0:
-                standard_deviation_list_train[i] = np.sqrt(sum_train / cnt_train)
-            if cnt_test != 0:
-                standard_deviation_list_test[i] = np.sqrt(sum_test / cnt_test)
+            for _ in range(cnt_train):
+                σ_pred_standard_deviation_list_train.append(i)
+                standard_deviation_list_train.append(np.sqrt(sum_train / cnt_train))
+            for _ in range(cnt_test):
+                σ_pred_standard_deviation_list_test.append(i)
+                standard_deviation_list_test.append(np.sqrt(sum_test / cnt_test))
 
         figure = plt.figure()
         ax = figure.add_subplot(111)
