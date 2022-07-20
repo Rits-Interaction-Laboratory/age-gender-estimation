@@ -21,4 +21,6 @@ nnet:
 
 logging:
   train_filename: "{timestamp}.csv"
+  estimate_train_filename: "result_train.csv"
+  estimate_test_filename: "result_test.csv"
   dataset_loader_filename: "dataset_loader.json"

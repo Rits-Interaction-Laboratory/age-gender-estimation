@@ -176,6 +176,7 @@ log/**/*.png
 
 # Heatmap directory
 heatmap/**/*.png
+heatmap/**/*.csv
 !heatmap/.gitkeep
 
 # Data directory

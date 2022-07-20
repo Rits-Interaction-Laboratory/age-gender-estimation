@@ -1,8 +1,11 @@
+import csv
+
 import numpy as np
 from matplotlib import pyplot as plt
 
 from src.nnet.base_nnet import BaseNNet
 from src.property.human_property import HumanProperty
+from src.property.logging_property import LoggingProperty
 from src.property.path_property import PathProperty
 from src.repository.human_repository import HumanRepository
 
@@ -20,6 +23,11 @@ class EstimateUseCase:
     human_property: HumanProperty = HumanProperty()
     """
     人間プロパティ
+    """
+
+    log_property: LoggingProperty = LoggingProperty()
+    """
+    ロギングプロパティ
     """
 
     nnet: BaseNNet
@@ -75,6 +83,20 @@ class EstimateUseCase:
             σ_pred_list_test.append(σ)
             θ_true_list_test.append(human.age)
             σ_true_list_test.append(abs(human.age - θ))
+
+        # 推定結果をログ出力
+        with open(f"{self.path_property.heatmap_path}/{self.log_property.estimate_train_filename}", "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["type", "age", "θ", "σ", "filename"])
+            for i in range(len(results_train)):
+                human = humans_train[i]
+                writer.writerow(["train", human.age, θ_pred_list_train[i], σ_pred_list_train[i], human.filename])
+        with open(f"{self.path_property.heatmap_path}/{self.log_property.estimate_test_filename}", "w") as f:
+            writer = csv.writer(f)
+            writer.writerow(["type", "age", "θ", "σ", "filename"])
+            for i in range(len(results_test)):
+                human = humans_test[i]
+                writer.writerow(["test", human.age, θ_pred_list_test[i], σ_pred_list_test[i], human.filename])
 
         # θのヒートマップを作成
         figure = plt.figure()
