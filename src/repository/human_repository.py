@@ -4,7 +4,7 @@ import os
 
 import numpy as np
 import tqdm
-from keras_preprocessing.image import img_to_array, load_img
+from keras_preprocessing.image import img_to_array, load_img, save_img
 
 from src.model.human_model import HumanModel
 from src.property.logging_property import LoggingProperty
@@ -31,6 +31,15 @@ class HumanRepository:
     """
     ロギングプロパティ
     """
+
+    def save(self, human: HumanModel):
+        """
+        人間モデルを保存
+
+        :param human: 人間モデル
+        """
+
+        save_img(x=human.image, path=f"{self.path_property.data_path}/{human.filename}")
 
     def select_all(self) -> list[HumanModel]:
         """
