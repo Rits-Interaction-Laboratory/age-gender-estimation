@@ -20,7 +20,7 @@ class FreezeCallback(Callback):
         number_of_layers: int = len(self.model.layers)
 
         # レイヤーを分割する境界
-        layer_split_index: int = 3
+        layer_split_index: int = 6
 
         # バッチ単位でモデルのフリーズ箇所をスイッチ
         if batch % 2 == 0:
