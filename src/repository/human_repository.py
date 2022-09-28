@@ -74,6 +74,20 @@ class HumanRepository:
             tqdm.tqdm(filenames)
         ))
 
+    def select_test(self) -> list[HumanModel]:
+        """
+        検証用の人間モデルリストを取得
+
+        :return: 人間モデルリスト
+        """
+
+        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/test/*.jpg")
+        filenames = filenames[:int(self.nnet_property.usage_rate * len(filenames))]
+        return list(map(
+            lambda filename: self.select_by_filename(filename),
+            tqdm.tqdm(filenames)
+        ))
+
     def select_by_filename(self, filename: str) -> HumanModel:
         """
         ファイル名から人間を取得
