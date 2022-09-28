@@ -32,23 +32,42 @@ class HumanRepository:
     ロギングプロパティ
     """
 
-    def save(self, human: HumanModel):
+    def save(self, human: HumanModel, is_train: bool = True):
         """
         人間モデルを保存
 
         :param human: 人間モデル
+        :param is_train: 学習用か
         """
 
-        save_img(x=human.image, path=f"{self.path_property.data_path}/{human.filename}")
+        if is_train:
+            save_img(x=human.image, path=f"{self.path_property.data_path}/train/{human.filename}")
+        else:
+            save_img(x=human.image, path=f"{self.path_property.data_path}/test/{human.filename}")
 
     def select_all(self) -> list[HumanModel]:
         """
         人間モデルを全件取得
+        TODO: 今後、本メソッドは利用しない方針にする
 
         :return: 人間モデルリスト
         """
 
-        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/*.jpg")
+        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/*/*.jpg")
+        filenames = filenames[:int(self.nnet_property.usage_rate * len(filenames))]
+        return list(map(
+            lambda filename: self.select_by_filename(filename),
+            tqdm.tqdm(filenames)
+        ))
+
+    def select_train(self) -> list[HumanModel]:
+        """
+        学習用の人間モデルリストを取得
+
+        :return: 人間モデルリスト
+        """
+
+        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/train/*.jpg")
         filenames = filenames[:int(self.nnet_property.usage_rate * len(filenames))]
         return list(map(
             lambda filename: self.select_by_filename(filename),

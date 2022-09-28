@@ -30,28 +30,28 @@ class DataAugmentUseCase:
     人間リポジトリ
     """
 
-    def data_augment(self):
+    def handle(self):
         """
-        データオーギュメンテーション
+        UseCase Handler
         """
 
         image_data_generator = ImageDataGenerator(
             rescale=1.0 / 255,
             zoom_range=0.2,
-            rotation_range=45,
+            rotation_range=5,
             horizontal_flip=True,
         )
 
-        humans = self.human_repository.select_all()
+        humans = self.human_repository.select_train()
 
         # 各年齢の画像枚数を算出
         age_pictures_size_list: list[int] = []
         for age in range(1, self.human_property.max_age + 1):
-            filtered_humans = list(filter(lambda x: x.age == age, humans))
+            filtered_humans = list(filter(lambda human: human.age == age, humans))
             age_pictures_size_list.append(len(filtered_humans))
 
         # 各年齢のデータを水増し
-        max_size: int = max(age_pictures_size_list)
+        augmentation_rate: int = 8
         for age in tqdm.tqdm(range(1, self.human_property.max_age + 1)):
             filtered_humans = list(filter(lambda x: x.age == age, humans))
             if len(filtered_humans) == 0:
@@ -63,7 +63,7 @@ class DataAugmentUseCase:
             count: int = 0
             for data in image_data_generator.flow(x, y, batch_size=1):
                 number_of_pictures: int = age_pictures_size_list[age - 1] + count
-                if number_of_pictures >= max_size:
+                if number_of_pictures >= age_pictures_size_list[age - 1] * augmentation_rate:
                     break
 
                 gender = int(data[1][0][1])
@@ -76,6 +76,6 @@ class DataAugmentUseCase:
                     image=np.array(data[0][0]),
                     filename=f"{age}_{gender}_{race}_{timestamp}.jpg.chip.jpg",
                 )
-                self.human_repository.save(human)
+                self.human_repository.save(human, True)
 
                 count += 1

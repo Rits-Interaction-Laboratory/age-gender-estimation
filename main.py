@@ -31,15 +31,15 @@ arguments = argument_parser.parse_args()
 
 if arguments.train:
     train_usecase = TrainUseCase(CNN())
-    train_usecase.train()
+    train_usecase.handle()
 elif arguments.estimate:
     estimate_usecase = EstimateUseCase(CNN(), arguments.weights)
-    estimate_usecase.estimate_age()
+    estimate_usecase.handle()
 elif arguments.log:
     analyse_usecase = AnalyseUseCase()
-    analyse_usecase.analyse_log(arguments.filename)
+    analyse_usecase.handle(arguments.filename)
 elif arguments.data_augment:
     data_augment_usecase = DataAugmentUseCase()
-    data_augment_usecase.data_augment()
+    data_augment_usecase.handle()
 else:
     argument_parser.print_help()

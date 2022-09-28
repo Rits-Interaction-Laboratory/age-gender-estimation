@@ -22,9 +22,9 @@ class TrainUseCase:
     def __init__(self, nnet: BaseNNet):
         self.nnet = nnet
 
-    def train(self):
+    def handle(self):
         """
-        学習する
+        UseCase Handler
         """
 
         # データセットをロード

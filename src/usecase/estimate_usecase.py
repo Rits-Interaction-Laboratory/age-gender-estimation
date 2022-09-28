@@ -44,9 +44,9 @@ class EstimateUseCase:
         self.nnet = nnet
         self.nnet.load_weights(weights_filename)
 
-    def estimate_age(self):
+    def handle(self):
         """
-        年齢を推定
+        UseCase Handler
         """
 
         # データセットを読み込む

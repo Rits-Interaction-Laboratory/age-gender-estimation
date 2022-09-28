@@ -16,9 +16,9 @@ class AnalyseUseCase:
     PATHプロパティ
     """
 
-    def analyse_log(self, filename: str):
+    def handle(self, filename: str):
         """
-        学習ログを分析
+        UseCase Handler
         """
 
         loss_list: list[float] = []
