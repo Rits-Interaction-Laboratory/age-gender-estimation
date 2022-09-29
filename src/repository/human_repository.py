@@ -45,21 +45,6 @@ class HumanRepository:
         else:
             save_img(x=human.image, path=f"{self.path_property.data_path}/test/{human.filename}")
 
-    def select_all(self) -> list[HumanModel]:
-        """
-        人間モデルを全件取得
-        TODO: 今後、本メソッドは利用しない方針にする
-
-        :return: 人間モデルリスト
-        """
-
-        filenames: list[str] = glob.glob(f"{self.path_property.data_path}/*/*.jpg")
-        filenames = filenames[:int(self.nnet_property.usage_rate * len(filenames))]
-        return list(map(
-            lambda filename: self.select_by_filename(filename),
-            tqdm.tqdm(filenames)
-        ))
-
     def select_train(self) -> list[HumanModel]:
         """
         学習用の人間モデルリストを取得
@@ -114,6 +99,7 @@ class HumanRepository:
     def split_dataset(self, humans: list[HumanModel]) -> list[list[HumanModel]]:
         """
         データセットを学習用、検証用に分割
+        TODO: 本メソッドを削除
 
         :param humans: 人間リスト
         :return: [学習用, 検証用]

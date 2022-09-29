@@ -51,6 +51,7 @@ class DataAugmentUseCase:
             age_pictures_size_list.append(len(filtered_humans))
 
         # 各年齢のデータを水増し
+        # TODO: 全部保存するのではなく、学習に使う分だけ保存する（現在は手動で仕分けている）
         augmentation_rate: int = 8
         for age in tqdm.tqdm(range(1, self.human_property.max_age + 1)):
             filtered_humans = list(filter(lambda x: x.age == age, humans))

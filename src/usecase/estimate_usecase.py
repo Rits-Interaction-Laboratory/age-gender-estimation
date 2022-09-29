@@ -50,8 +50,8 @@ class EstimateUseCase:
         """
 
         # データセットを読み込む
-        humans = self.human_repository.select_all()
-        humans_train, humans_test = self.human_repository.split_dataset(humans)
+        humans_train = self.human_repository.select_train()
+        humans_test = self.human_repository.select_test()
         x_train: np.ndarray = np.array([human.image for human in humans_train], dtype=np.float32)
         x_test: np.ndarray = np.array([human.image for human in humans_test], dtype=np.float32)
 
