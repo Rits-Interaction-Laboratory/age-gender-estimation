@@ -200,3 +200,17 @@ class EstimateUseCase:
         plt.xlim(0, self.human_property.max_age)
         plt.ylim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_standard_deviation_test.png")
+
+        plt.figure()
+        plt.hist(standard_deviation_list_train, bins=self.human_property.max_age)
+        plt.xlabel("σ")
+        plt.ylabel("count")
+        plt.xlim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/σ_count_train.png")
+
+        plt.figure()
+        plt.hist(standard_deviation_list_test, bins=self.human_property.max_age)
+        plt.xlabel("σ")
+        plt.ylabel("count")
+        plt.xlim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/σ_count_test.png")
