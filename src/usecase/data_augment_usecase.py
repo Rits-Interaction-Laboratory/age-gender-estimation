@@ -37,9 +37,9 @@ class DataAugmentUseCase:
 
         image_data_generator = ImageDataGenerator(
             rescale=1.0 / 255,
-            zoom_range=0.2,
-            rotation_range=5,
+            rotation_range=10,
             horizontal_flip=True,
+            fill_mode='constant',
         )
 
         humans = self.human_repository.select_train()
