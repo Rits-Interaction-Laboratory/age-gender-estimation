@@ -151,29 +151,52 @@ class EstimateUseCase:
         standard_deviation_list_train: list[float] = []
         σ_pred_standard_deviation_list_test: list[float] = []
         standard_deviation_list_test: list[float] = []
+        σ_error_bar_list_train: list[float] = []
+        σ_error_bar_x_list_train: list[float] = []
+        σ_error_bar_list_test: list[float] = []
+        σ_error_bar_x_list_test: list[float] = []
 
         for i in range(self.human_property.max_age):
+            train_list: list[float] = []
             sum_train: float = 0.0
             cnt_train: int = 0
+            test_list: list[float] = []
             sum_test: float = 0.0
             cnt_test: int = 0
 
             for j, σ in enumerate(σ_pred_list_train):
                 if int(σ) == i:
+                    train_list.append(σ_true_list_train[j])
                     sum_train += σ_true_list_train[j] ** 2
                     cnt_train += 1
 
             for j, σ in enumerate(σ_pred_list_test):
                 if int(σ) == i:
+                    test_list.append(σ_true_list_test[j])
                     sum_test += σ_true_list_test[j] ** 2
                     cnt_test += 1
 
-            for _ in range(cnt_train):
-                σ_pred_standard_deviation_list_train.append(i)
-                standard_deviation_list_train.append(np.sqrt(sum_train / cnt_train))
-            for _ in range(cnt_test):
-                σ_pred_standard_deviation_list_test.append(i)
-                standard_deviation_list_test.append(np.sqrt(sum_test / cnt_test))
+            if cnt_train > 1:
+                for _ in range(cnt_train):
+                    σ_pred_standard_deviation_list_train.append(i)
+                    standard_deviation_list_train.append(np.sqrt(sum_train / cnt_train))
+
+                    # エラーバーの大きさを見積もる
+                    unbiased_variance = np.var(train_list, ddof=1)
+                    σ_error_bar_list_train.append(
+                        np.sqrt((2 / (cnt_train ** 2 * (cnt_train - 1))) * (unbiased_variance ** 2)))
+                    σ_error_bar_x_list_train.append(i)
+
+            if cnt_test > 1:
+                for _ in range(cnt_test):
+                    σ_pred_standard_deviation_list_test.append(i)
+                    standard_deviation_list_test.append(np.sqrt(sum_test / cnt_test))
+
+                    # エラーバーの大きさを見積もる
+                    unbiased_variance = np.var(test_list, ddof=1)
+                    σ_error_bar_list_test.append(
+                        np.sqrt((2 / (cnt_test ** 2 * (cnt_test - 1))) * (unbiased_variance ** 2)))
+                    σ_error_bar_x_list_test.append(i)
 
         figure = plt.figure()
         ax = figure.add_subplot(111)
@@ -214,3 +237,24 @@ class EstimateUseCase:
         plt.ylabel("count")
         plt.xlim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_count_test.png")
+
+        # 残差標準偏差のエラーバー（標本平均値の標準偏差の標準偏差）を作成
+        plt.figure()
+        plt.axes().set_aspect('equal')
+        plt.errorbar(σ_error_bar_x_list_train, standard_deviation_list_train, yerr=σ_error_bar_list_train, capsize=5,
+                     fmt='o', markersize=5, ecolor='black', markeredgecolor="black", color='w')
+        plt.xlabel("σ")
+        plt.ylabel("|y - θ| standard deviation")
+        plt.xlim(0, 150)
+        plt.ylim(0, 150)
+        plt.savefig(f"{self.path_property.heatmap_path}/σ_error_bar_train.png")
+
+        plt.figure()
+        plt.axes().set_aspect('equal')
+        plt.errorbar(σ_error_bar_x_list_test, standard_deviation_list_test, yerr=σ_error_bar_list_test, capsize=5,
+                     fmt='o', markersize=5, ecolor='black', markeredgecolor="black", color='w')
+        plt.xlabel("σ")
+        plt.ylabel("|y - θ| standard deviation")
+        plt.xlim(0, 150)
+        plt.ylim(0, 150)
+        plt.savefig(f"{self.path_property.heatmap_path}/σ_error_bar_test.png")
