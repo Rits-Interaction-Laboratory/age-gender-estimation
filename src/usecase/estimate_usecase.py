@@ -224,19 +224,59 @@ class EstimateUseCase:
         plt.ylim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_standard_deviation_test.png")
 
+        figure = plt.figure()
+        ax = figure.add_subplot(111)
+        ax.set_aspect('equal', adjustable='box')
+        plt.hist2d(standard_deviation_list_train, σ_pred_standard_deviation_list_train,
+                   bins=self.human_property.max_age,
+                   range=[(0, self.human_property.max_age), (0, self.human_property.max_age)], cmin=1)
+        plt.colorbar()
+        plt.xlabel("|y - θ| standard deviation")
+        plt.ylabel("σ")
+        plt.xlim(0, self.human_property.max_age)
+        plt.ylim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/standard_deviation_σ_train.png")
+
+        figure = plt.figure()
+        ax = figure.add_subplot(111)
+        ax.set_aspect('equal', adjustable='box')
+        plt.hist2d(standard_deviation_list_test, σ_pred_standard_deviation_list_test,
+                   bins=self.human_property.max_age,
+                   range=[(0, self.human_property.max_age), (0, self.human_property.max_age)], cmin=1)
+        plt.colorbar()
+        plt.xlabel("|y - θ| standard deviation")
+        plt.ylabel("σ")
+        plt.xlim(0, self.human_property.max_age)
+        plt.ylim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/standard_deviation_σ_test.png")
+
         plt.figure()
-        plt.hist(standard_deviation_list_train, bins=self.human_property.max_age)
+        plt.hist(σ_pred_standard_deviation_list_train, bins=self.human_property.max_age)
         plt.xlabel("σ")
         plt.ylabel("count")
         plt.xlim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_count_train.png")
 
         plt.figure()
-        plt.hist(standard_deviation_list_test, bins=self.human_property.max_age)
+        plt.hist(σ_pred_standard_deviation_list_test, bins=self.human_property.max_age)
         plt.xlabel("σ")
         plt.ylabel("count")
         plt.xlim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_count_test.png")
+
+        plt.figure()
+        plt.hist(standard_deviation_list_train, bins=self.human_property.max_age)
+        plt.xlabel("|y - θ|")
+        plt.ylabel("count")
+        plt.xlim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/residual_error_count_train.png")
+
+        plt.figure()
+        plt.hist(standard_deviation_list_test, bins=self.human_property.max_age)
+        plt.xlabel("|y - θ|")
+        plt.ylabel("count")
+        plt.xlim(0, self.human_property.max_age)
+        plt.savefig(f"{self.path_property.heatmap_path}/residual_error_count_test.png")
 
         # 残差標準偏差のエラーバー（標本平均値の標準偏差の標準偏差）を作成
         plt.figure()
@@ -245,8 +285,8 @@ class EstimateUseCase:
                      fmt='o', markersize=5, ecolor='black', markeredgecolor="black", color='w')
         plt.xlabel("σ")
         plt.ylabel("|y - θ| standard deviation")
-        plt.xlim(0, 150)
-        plt.ylim(0, 150)
+        plt.xlim(0, 50)
+        plt.ylim(0, 50)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_error_bar_train.png")
 
         plt.figure()
@@ -255,6 +295,6 @@ class EstimateUseCase:
                      fmt='o', markersize=5, ecolor='black', markeredgecolor="black", color='w')
         plt.xlabel("σ")
         plt.ylabel("|y - θ| standard deviation")
-        plt.xlim(0, 150)
-        plt.ylim(0, 150)
+        plt.xlim(0, 50)
+        plt.ylim(0, 50)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_error_bar_test.png")
