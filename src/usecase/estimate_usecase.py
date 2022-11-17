@@ -198,6 +198,25 @@ class EstimateUseCase:
                         np.sqrt((2 / (cnt_test ** 2 * (cnt_test - 1))) * (unbiased_variance ** 2)))
                     σ_error_bar_x_list_test.append(i)
 
+        # 横軸を|y-θ|、縦軸をσにした場合のグラフを計算
+        standard_deviation_list_test_v2: list[float] = []
+        σ_pred_standard_deviation_list_test_v2: list[float] = []
+        for i in range(self.human_property.max_age):
+            test_list: list[float] = []
+            sum_test: float = 0.0
+            cnt_test: int = 0
+
+            for j, σ in enumerate(σ_true_list_test):
+                if int(σ) == i:
+                    test_list.append(σ_pred_list_test[j])
+                    sum_test += σ_pred_list_test[j] ** 2
+                    cnt_test += 1
+
+            if cnt_test > 1:
+                for _ in range(cnt_test):
+                    standard_deviation_list_test_v2.append(i)
+                    σ_pred_standard_deviation_list_test_v2.append(np.sqrt(sum_test / cnt_test))
+
         figure = plt.figure()
         ax = figure.add_subplot(111)
         ax.set_aspect('equal', adjustable='box')
@@ -240,7 +259,7 @@ class EstimateUseCase:
         figure = plt.figure()
         ax = figure.add_subplot(111)
         ax.set_aspect('equal', adjustable='box')
-        plt.hist2d(standard_deviation_list_test, σ_pred_standard_deviation_list_test,
+        plt.hist2d(standard_deviation_list_test_v2, σ_pred_standard_deviation_list_test_v2,
                    bins=self.human_property.max_age,
                    range=[(0, self.human_property.max_age), (0, self.human_property.max_age)], cmin=1)
         plt.colorbar()
@@ -272,7 +291,7 @@ class EstimateUseCase:
         plt.savefig(f"{self.path_property.heatmap_path}/residual_error_count_train.png")
 
         plt.figure()
-        plt.hist(standard_deviation_list_test, bins=self.human_property.max_age)
+        plt.hist(standard_deviation_list_test_v2, bins=self.human_property.max_age)
         plt.xlabel("|y - θ|")
         plt.ylabel("count")
         plt.xlim(0, self.human_property.max_age)
