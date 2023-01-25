@@ -70,7 +70,8 @@ class EstimateUseCase:
 
         for i in range(len(results_train)):
             human = humans_train[i]
-            θ, σ = results_train[i]
+            θ = results_train[i][0]
+            σ = np.exp(results_train[i][1])
             θ_pred_list_train.append(θ)
             σ_pred_list_train.append(σ)
             θ_true_list_train.append(human.age)
@@ -78,7 +79,8 @@ class EstimateUseCase:
 
         for i in range(len(results_test)):
             human = humans_test[i]
-            θ, σ = results_test[i]
+            θ = results_test[i][0]
+            σ = np.exp(results_test[i][1])
             θ_pred_list_test.append(θ)
             σ_pred_list_test.append(σ)
             θ_true_list_test.append(human.age)
