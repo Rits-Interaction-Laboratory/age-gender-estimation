@@ -48,4 +48,4 @@ class TrainUseCase:
         y_test: np.ndarray = np.array([human.age for human in humans_test], dtype=np.float32)
 
         # 学習
-        self.nnet.train(x_train, y_train, x_test, y_test)
+        return self.nnet.train(x_train, y_train, x_test, y_test)

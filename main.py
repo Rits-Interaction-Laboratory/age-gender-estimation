@@ -1,6 +1,6 @@
 import argparse
 
-from src.nnet.cnn import CNN
+from src.nnet.resnet import ResNet
 from src.usecase.analyse_usecase import AnalyseUseCase
 from src.usecase.data_augment_usecase import DataAugmentUseCase
 from src.usecase.estimate_usecase import EstimateUseCase
@@ -30,10 +30,18 @@ argument_parser.add_argument("-f", "--filename",
 arguments = argument_parser.parse_args()
 
 if arguments.train:
-    train_usecase = TrainUseCase(CNN())
-    train_usecase.handle()
+    resnet = ResNet()
+    train_usecase = TrainUseCase(resnet)
+    history = train_usecase.handle()
+
+    best_epoch = history.history['val_loss'].index(min(history.history['val_loss'])) + 1
+    print(f"最良エポック：{best_epoch}")
+    weights_filename = (f"ckpt/{best_epoch}.h5")
+
+    estimate_usecase = EstimateUseCase(resnet, weights_filename)
+    estimate_usecase.handle()
 elif arguments.estimate:
-    estimate_usecase = EstimateUseCase(CNN(), arguments.weights)
+    estimate_usecase = EstimateUseCase(ResNet(), arguments.weights)
     estimate_usecase.handle()
 elif arguments.log:
     analyse_usecase = AnalyseUseCase()

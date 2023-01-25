@@ -9,7 +9,6 @@ from tensorflow.python.keras.callbacks import Callback
 from tensorflow.python.keras.callbacks import ModelCheckpoint, CSVLogger
 from tensorflow.python.types.core import Tensor
 
-from src.nnet.batch_data_generator import BatchDataGenerator
 from src.nnet.freeze_callback import FreezeCallback
 from src.property.human_property import HumanProperty
 from src.property.logging_property import LoggingProperty
@@ -127,21 +126,13 @@ class BaseNNet(metaclass=ABCMeta):
             callbacks.append(freeze_callback)
 
         # 学習
-        self.compile_model(self.first_loss)
-        self.model.fit_generator(
-            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size),
-            epochs=self.nnet_property.epochs,
-            validation_data=(x_test, y_test),
-            callbacks=callbacks,
-        )
-
-        # lossを切り替えて再度学習
         self.compile_model(self.second_loss)
-        self.model.fit_generator(
-            BatchDataGenerator(x_train, y_train, self.nnet_property.batch_size),
-            initial_epoch=self.nnet_property.epochs,
-            epochs=self.nnet_property.epochs * 2,
-            validation_data=(x_test, y_test),
+        return self.model.fit(
+            x=x_train,
+            y=y_train,
+            batch_size=256,
+            epochs=self.nnet_property.epochs,
+            validation_split=self.nnet_property.validation_split_rate,
             callbacks=callbacks,
         )
 
@@ -183,14 +174,11 @@ class BaseNNet(metaclass=ABCMeta):
         # σ: 推定した残差標準偏差
         y = y_true[:, 0]
         θ = y_pred[:, 0]
-        σ = y_pred[:, 1]
-
-        # 0になることを防ぐためのオフセット
-        epsilon = K.constant(K.epsilon())
+        ρ = y_pred[:, 1]
 
         # LaTeX: log(2 \pi \sigma^2) + \frac{(y - \theta)^2}{\sigma^2}
         return K.mean(
-            K.log((2 * np.pi * (σ ** 2)) + ((y - θ) ** 2) / (σ ** 2 + epsilon))
+            ρ + (y - θ) ** 2 * K.exp(-ρ)
         )
 
     def output_activation(self, y_pred: np.ndarray) -> Tensor:
@@ -204,13 +192,9 @@ class BaseNNet(metaclass=ABCMeta):
         # θ: 推定した年齢
         # σ: 推定した残差標準偏差
         θ = y_pred[:, 0]
-        σ = y_pred[:, 1]
+        ρ = y_pred[:, 1] + K.constant(K.epsilon())
 
-        if self.nnet_property.normalize:
-            θ = K.sigmoid(θ)
-            σ = K.sigmoid(σ)
-
-        return K.stack([θ, σ], 1)
+        return K.stack([θ, ρ], 1)
 
     def θ_metric(self, y_true: np.ndarray, y_pred: np.ndarray) -> Tensor:
         """
