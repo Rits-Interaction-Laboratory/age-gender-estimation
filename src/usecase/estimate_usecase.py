@@ -55,6 +55,18 @@ class EstimateUseCase:
         x_train: np.ndarray = np.array([human.image for human in humans_train], dtype=np.float32)
         x_test: np.ndarray = np.array([human.image for human in humans_test], dtype=np.float32)
 
+        plt.figure()
+        plt.hist([human.age for human in humans_train], bins=self.human_property.max_age)
+        plt.xlim(0, self.human_property.max_age)
+        plt.xlabel("age")
+        plt.savefig("./heatmap/histogram_train.png")
+
+        plt.figure()
+        plt.hist([human.age for human in humans_test], bins=self.human_property.max_age)
+        plt.xlim(0, self.human_property.max_age)
+        plt.xlabel("age")
+        plt.savefig("./heatmap/histogram_test.png")
+
         # 年齢を推定
         results_train = self.nnet.predict(x_train)
         results_test = self.nnet.predict(x_test)
