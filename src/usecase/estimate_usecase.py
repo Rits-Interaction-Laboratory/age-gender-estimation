@@ -190,27 +190,15 @@ class EstimateUseCase:
                     sum_test += σ_true_list_test[j] ** 2
                     cnt_test += 1
 
-            if cnt_train > 1:
+            if cnt_train >= 1:
                 for _ in range(cnt_train):
                     σ_pred_standard_deviation_list_train.append(i)
                     standard_deviation_list_train.append(np.sqrt(sum_train / cnt_train))
 
-                    # エラーバーの大きさを見積もる
-                    unbiased_variance = np.var(train_list, ddof=1)
-                    σ_error_bar_list_train.append(
-                        np.sqrt((2 / (cnt_train ** 2 * (cnt_train - 1))) * (unbiased_variance ** 2)))
-                    σ_error_bar_x_list_train.append(i)
-
-            if cnt_test > 1:
+            if cnt_test >= 1:
                 for _ in range(cnt_test):
                     σ_pred_standard_deviation_list_test.append(i)
                     standard_deviation_list_test.append(np.sqrt(sum_test / cnt_test))
-
-                    # エラーバーの大きさを見積もる
-                    unbiased_variance = np.var(test_list, ddof=1)
-                    σ_error_bar_list_test.append(
-                        np.sqrt((2 / (cnt_test ** 2 * (cnt_test - 1))) * (unbiased_variance ** 2)))
-                    σ_error_bar_x_list_test.append(i)
 
         # 横軸を|y-θ|、縦軸をσにした場合のグラフを計算
         standard_deviation_list_test_v2: list[float] = []
@@ -296,6 +284,8 @@ class EstimateUseCase:
         plt.ylabel("samples")
         plt.xlim(0, self.human_property.max_age)
         plt.savefig(f"{self.path_property.heatmap_path}/σ_count_test.png")
+
+        return
 
         plt.figure()
         plt.hist(standard_deviation_list_train, bins=self.human_property.max_age)
