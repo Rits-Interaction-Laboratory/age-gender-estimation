@@ -132,7 +132,7 @@ class BaseNNet(metaclass=ABCMeta):
             y=y_train,
             batch_size=256,
             epochs=self.nnet_property.epochs,
-            validation_split=self.nnet_property.validation_split_rate,
+            validation_data=(x_test, y_test),
             callbacks=callbacks,
         )
 
